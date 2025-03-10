@@ -1,15 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/dbConfig/dbConfig";
-import Transaction from "@/models/transactionModel";
+import Cash from "@/models/cashModel";
 
 connect();
 export async function GET(request: NextRequest) {
   try {
-    const transaction = await Transaction.find().populate('bank_id');
+    const cash = await Cash.find().limit(1);
     // console.log("Customers", player);
     return NextResponse.json({
-      message: "Transaction Found",
-      data: transaction,
+      message: "cash Found",
+      data: cash,
     });
   } catch (error: any) {
     // console.log("reachGetData")

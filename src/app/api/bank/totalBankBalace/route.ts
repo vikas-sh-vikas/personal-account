@@ -1,18 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/dbConfig/dbConfig";
-import Transaction from "@/models/transactionModel";
+import Bank from "@/models/bankModel";
 
 connect();
+
 export async function GET(request: NextRequest) {
   try {
-    const transaction = await Transaction.find().populate('bank_id');
-    // console.log("Customers", player);
+    const banks = await Bank.find();
+    const totalBalance = banks.reduce((total, bank) => total + parseFloat(bank.balance), 0);
+
     return NextResponse.json({
-      message: "Transaction Found",
-      data: transaction,
+      message: "Bank Found",
+      // data: banks,
+      totalBalance,
     });
   } catch (error: any) {
-    // console.log("reachGetData")
     return NextResponse.json({ error: error.message }, { status: 400 });
   }
 }

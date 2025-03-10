@@ -16,7 +16,7 @@ export interface Transaction {
   amount: string;
   description: string;
   category:string;
-  paymentMethod: "cash" | "bank";
+  payment_method: "cash" | "bank";
   bank: Bank | null;
   date: string;
   type: "credit" | "debit";

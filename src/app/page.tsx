@@ -13,7 +13,6 @@ import axios from "axios";
 export default function ExpenseTracker() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [banks, setBanks] = useState<Bank[]>([]);
-  const [balance, setBalance] = useState<Balance>({ cash: 5000, bank: 15000 });
   const [newTransaction, setNewTransaction] = useState<NewTransaction>({
     amount: "",
     description: "",
@@ -26,14 +25,22 @@ export default function ExpenseTracker() {
   useEffect(() => {
     bankList();
     transactionList();
-    const balanceData = localStorage.getItem("balance");
-    if (balanceData) {
-      const parsedBalance = JSON.parse(balanceData);
-      if (parsedBalance.cash && parsedBalance.bank) {
-        setBalance(parsedBalance);
-      }
-    }
+    // const balanceData = localStorage.getItem("balance");
+    // if (balanceData) {
+    //   const parsedBalance = JSON.parse(balanceData);
+    //   if (parsedBalance.cash && parsedBalance.bank) {
+    //     setBalance(parsedBalance);
+    //   }
+    // }
   }, []);
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).replace(",", ""); // Removes the comma
+  };
   const bankList = async () => {
     try {
       const response = await axios.get("/api/bank/getBanks");
@@ -57,23 +64,24 @@ export default function ExpenseTracker() {
   };
   const transactionList = async () => {
     try {
-      const response = await axios.get("/api/transaction/getTransaction");
+      const response = await axios.get("/api/transaction/getRecentTransaction");
 
       const apiData = response.data.data;
+
       const banksWithParsedBalance = await apiData.map((transaction: any) => ({
         _id: transaction._id,
         amount: transaction.amount,
         description: transaction.description,
-        category:transaction.category_id,
-        paymentMethod: transaction.payment_method,
-        bank: transaction.bannk_id,
-        date: transaction.date,
+        category: transaction.category_id,
+        payment_method: transaction.payment_method,
+        bank: transaction.bank_id,
+        date: formatDate(transaction.date), // Example: "01-Jan-2024"
         type: transaction.type,
       }));
 
       // console.log("Response", apiData);
 
-      setTransactions(banksWithParsedBalance)
+      setTransactions(banksWithParsedBalance);
       // setBanks(apiData);
 
       // setSuccess("Player added successfully!");
@@ -86,9 +94,9 @@ export default function ExpenseTracker() {
     }
   };
   // Save data to localStorage
-  useEffect(() => {
-    localStorage.setItem("balance", JSON.stringify(balance));
-  }, [balance]);
+  // useEffect(() => {
+  //   localStorage.setItem("balance", JSON.stringify(balance));
+  // }, [balance]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,15 +105,18 @@ export default function ExpenseTracker() {
     try {
       const payload = {
         // ...newTransaction,
-        type:newTransaction.type,
-        amount:newTransaction.amount,
+        type: newTransaction.type,
+        amount: newTransaction.amount,
         category_id: parseInt(newTransaction.category),
         payment_method: newTransaction.paymentMethod,
         date: newTransaction.date,
         description: newTransaction.description,
-        bannk_id: newTransaction.bank?._id ?? "",
+        bank_id: newTransaction.bank?._id ?? "",
       };
-      const response = await axios.post("/api/transaction/addEditTransaction", payload);
+      const response = await axios.post(
+        "/api/transaction/addEditTransaction",
+        payload
+      );
       console.log("Response", response);
       transactionList();
     } catch (err) {
@@ -115,13 +126,13 @@ export default function ExpenseTracker() {
       // setLoading(false);
     }
 
-    setBalance((prev) => ({
-      ...prev,
-      [newTransaction.paymentMethod]:
-        newTransaction.type === "credit"
-          ? prev[newTransaction.paymentMethod] + amount
-          : prev[newTransaction.paymentMethod] - amount,
-    }));
+    // setBalance((prev) => ({
+    //   ...prev,
+    //   [newTransaction.paymentMethod]:
+    //     newTransaction.type === "credit"
+    //       ? prev[newTransaction.paymentMethod] + amount
+    //       : prev[newTransaction.paymentMethod] - amount,
+    // }));
 
     setNewTransaction({
       amount: "",
@@ -174,13 +185,6 @@ export default function ExpenseTracker() {
       <OperationButtons />
 
       <BalanceCards
-        totalCredits={transactions
-          .filter((t) => t.type === "credit")
-          .reduce((sum, t) => sum + parseFloat(t.amount), 0)}
-        totalDebits={transactions
-          .filter((t) => t.type === "debit")
-          .reduce((sum, t) => sum + parseFloat(t.amount), 0)}
-        netWorth={balance.cash + balance.bank}
       />
 
       <TransactionTypeToggle

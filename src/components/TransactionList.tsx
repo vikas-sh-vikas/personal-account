@@ -6,6 +6,7 @@ export default function TransactionList({
 }: {
   transactions: Transaction[];
 }) {
+
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden">
       <div className="p-6 border-b">

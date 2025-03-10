@@ -1,4 +1,4 @@
-import { FaMoneyBillAlt, FaArrowUp, FaArrowDown } from "react-icons/fa";
+import { FaMoneyBillAlt, FaArrowUp, FaArrowDown, FaCreditCard } from "react-icons/fa";
 import { Transaction } from "../types/types";
 
 export default function TransactionItem({
@@ -6,6 +6,7 @@ export default function TransactionItem({
 }: {
   transaction: Transaction;
 }) {
+
   return (
     <div
       className={`p-4 hover:bg-gray-50 ${
@@ -40,10 +41,10 @@ export default function TransactionItem({
         </div>
         <div className="flex items-center gap-4 text-sm">
           <div className="flex items-center gap-2">
-            {transaction.paymentMethod === "bank" && transaction.bank ? (
+            {transaction.payment_method === "bank" && transaction.bank ? (
               <>
-                {/* {transaction.bank.icon} */}
-                <span className="text-gray-600">{transaction.bank.name}</span>
+                <FaCreditCard style={{ color: "#6b7280" }} />
+                <span className="text-gray-600">{transaction.bank?.name}</span>
               </>
             ) : (
               <>

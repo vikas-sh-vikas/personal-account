@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       amount,
       category_id,
       payment_method,
-      bannk_id,
+      bank_id,
       date,
       description,
     } = reqBody;
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
         amount,
         category_id,
         payment_method,
-        bannk_id,
+        bank_id,
         date,
         description,
       });

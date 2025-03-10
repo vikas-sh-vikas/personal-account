@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Bank from "./bankModel";
 
 const transactionSchema = new mongoose.Schema({
   type: {
@@ -21,10 +22,11 @@ const transactionSchema = new mongoose.Schema({
     required: [true, "Please provide a payment method"],
     // unique: true,
   },
-  bannk_id: {
-    type: String,
-    // required: [true, "Please provide a category"],
-    // unique: true,
+  bank_id: {
+    type: 'ObjectId',
+    ref:Bank,
+    required: false, // Makes it optional
+    default: '',   // Ensures it can be empty
   },
   date: {
     type: Date,

@@ -1,23 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { connect } from "@/dbConfig/dbConfig";
-import Transaction from "@/models/transactionModel";
+import Cash from "@/models/cashModel";
 
 connect();
 export async function POST(request: NextRequest) {
   try {
     const reqBody = await request.json();
     // console.log("object", reqBody);
-    const transaction = await Transaction.findOne({ _id: reqBody.id });
+    const cash = await Cash.findOne({ _id: reqBody.id });
 
-    if (!transaction) {
+    if (!cash) {
       return NextResponse.json({
-        message: "Transaction Not Found",
-        data: transaction,
+        message: "cash Not Found",
+        data: cash,
       });
     }
     return NextResponse.json({
-      message: "Transaction Found",
-      data: transaction,
+      message: "cash Found",
+      data: cash,
     });
   } catch (error: any) {
     // console.log("reachGetData")
