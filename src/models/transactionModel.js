@@ -23,10 +23,11 @@ const transactionSchema = new mongoose.Schema({
     // unique: true,
   },
   bank_id: {
-    type: 'ObjectId',
-    ref:Bank,
-    required: false, // Makes it optional
-    default: '',   // Ensures it can be empty
+    type: mongoose.Schema.Types.ObjectId,
+    ref: Bank,
+    required: false,
+    default: null,
+    set: (value) => (value === "" ? null : value), // Convert empty string to null
   },
   date: {
     type: Date,

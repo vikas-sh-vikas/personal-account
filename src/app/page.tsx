@@ -1,8 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { FaCreditCard, FaWallet } from "react-icons/fa";
-import { Balance, Bank, NewTransaction, Transaction } from "@/types/types";
+import {  FaWallet } from "react-icons/fa";
+import {  Bank, Transaction } from "@/types/types";
 import OperationButtons from "@/components/OperationButtons";
 import BalanceCards from "@/components/BalanceCards";
 import TransactionTypeToggle from "@/components/TransactionTypeToggle";
@@ -13,11 +12,12 @@ import axios from "axios";
 export default function ExpenseTracker() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [banks, setBanks] = useState<Bank[]>([]);
-  const [newTransaction, setNewTransaction] = useState<NewTransaction>({
+  const [newTransaction, setNewTransaction] = useState<Transaction>({
+    _id:"",
     amount: "",
     description: "",
     category: "",
-    paymentMethod: "cash",
+    payment_method: "cash",
     bank: null,
     date: new Date().toISOString().split("T")[0],
     type: "debit",
@@ -25,13 +25,6 @@ export default function ExpenseTracker() {
   useEffect(() => {
     bankList();
     transactionList();
-    // const balanceData = localStorage.getItem("balance");
-    // if (balanceData) {
-    //   const parsedBalance = JSON.parse(balanceData);
-    //   if (parsedBalance.cash && parsedBalance.bank) {
-    //     setBalance(parsedBalance);
-    //   }
-    // }
   }, []);
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -44,17 +37,8 @@ export default function ExpenseTracker() {
   const bankList = async () => {
     try {
       const response = await axios.get("/api/bank/getBanks");
-
       const apiData = response.data.data;
-      const banksWithParsedBalance = await apiData.map((bank: any) => ({
-        ...bank,
-        balance: parseFloat(bank.balance),
-      }));
-
       setBanks(apiData);
-
-      // setSuccess("Player added successfully!");
-      // setTeam({ name: "", shortCode: "" }); // reset form
     } catch (err) {
       console.error(err);
       // setError("Failed to add player. Please try again.");
@@ -93,10 +77,6 @@ export default function ExpenseTracker() {
       // setLoading(false);
     }
   };
-  // Save data to localStorage
-  // useEffect(() => {
-  //   localStorage.setItem("balance", JSON.stringify(balance));
-  // }, [balance]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,7 +88,7 @@ export default function ExpenseTracker() {
         type: newTransaction.type,
         amount: newTransaction.amount,
         category_id: parseInt(newTransaction.category),
-        payment_method: newTransaction.paymentMethod,
+        payment_method: newTransaction.payment_method,
         date: newTransaction.date,
         description: newTransaction.description,
         bank_id: newTransaction.bank?._id ?? "",
@@ -117,7 +97,7 @@ export default function ExpenseTracker() {
         "/api/transaction/addEditTransaction",
         payload
       );
-      console.log("Response", response);
+      // console.log("Response", response);
       transactionList();
     } catch (err) {
       console.error(err);
@@ -126,19 +106,12 @@ export default function ExpenseTracker() {
       // setLoading(false);
     }
 
-    // setBalance((prev) => ({
-    //   ...prev,
-    //   [newTransaction.paymentMethod]:
-    //     newTransaction.type === "credit"
-    //       ? prev[newTransaction.paymentMethod] + amount
-    //       : prev[newTransaction.paymentMethod] - amount,
-    // }));
-
     setNewTransaction({
+      _id:"",
       amount: "",
       description: "",
       category: "food",
-      paymentMethod: "cash",
+      payment_method: "cash",
       bank: null,
       date: new Date().toISOString().split("T")[0],
       type: "debit",
@@ -158,7 +131,7 @@ export default function ExpenseTracker() {
   const handlePaymentMethodChange = (method: "cash" | "bank") => {
     setNewTransaction({
       ...newTransaction,
-      paymentMethod: method,
+      payment_method: method,
       bank: method === "cash" ? null : newTransaction.bank,
     });
   };
@@ -201,8 +174,8 @@ export default function ExpenseTracker() {
         onSubmit={handleSubmit}
         onTypeChange={handleTypeChange}
       />
-
       <TransactionList transactions={transactions} />
     </div>
+
   );
 }

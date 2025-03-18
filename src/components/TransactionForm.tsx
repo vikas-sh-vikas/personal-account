@@ -62,7 +62,7 @@ export default function TransactionForm({
                 type="button"
                 onClick={() => onPaymentMethodChange("cash")}
                 className={`p-2 rounded-lg flex items-center justify-center gap-2 ${
-                  newTransaction.paymentMethod === "cash"
+                  newTransaction.payment_method === "cash"
                     ? "bg-blue-500 text-white"
                     : "bg-gray-100 hover:bg-gray-200"
                 }`}
@@ -73,7 +73,7 @@ export default function TransactionForm({
                 type="button"
                 onClick={() => onPaymentMethodChange("bank")}
                 className={`p-2 rounded-lg flex items-center justify-center gap-2 ${
-                  newTransaction.paymentMethod === "bank"
+                  newTransaction.payment_method === "bank"
                     ? "bg-blue-500 text-white"
                     : "bg-gray-100 hover:bg-gray-200"
                 }`}
@@ -83,7 +83,7 @@ export default function TransactionForm({
             </div>
           </div>
 
-          {newTransaction.paymentMethod === "bank" && (
+          {newTransaction.payment_method === "bank" && (
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">
                 Select Bank

@@ -3,6 +3,7 @@ import { JSX } from "react";
 export interface Bank {
   _id: string;
   name: string;
+  value?:string;
   // icon: JSX.Element;
 }
 
@@ -12,7 +13,7 @@ export interface Balance {
 }
 
 export interface Transaction {
-  _id: string;
+  _id?: string;
   amount: string;
   description: string;
   category:string;
@@ -22,18 +23,8 @@ export interface Transaction {
   type: "credit" | "debit";
 }
 
-export interface NewTransaction {
-  amount: string;
-  description: string;
-  category: string;
-  paymentMethod: "cash" | "bank";
-  bank: Bank | null;
-  date: string;
-  type: "credit" | "debit";
-}
-
 export type TransactionFormProps = {
-  newTransaction: NewTransaction;
+  newTransaction: Transaction;
   banks: Bank[];
   onInputChange: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>

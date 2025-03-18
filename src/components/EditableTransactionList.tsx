@@ -6,11 +6,14 @@ import EditableTransactionItem from "./EditableTransactionItem";
 
 export default function EditableTransactionList({
   transactions,
-  onUpdate,
+  onUpdateForm,
 }: {
   transactions: Transaction[];
-  onUpdate: (transaction: Transaction) => void;
+  onUpdateForm: (id: string) => void;
 }) {
+  const handleUpdateForm = async (id:string) =>{
+    onUpdateForm(id)
+  }
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden">
       <div className="p-6 border-b">
@@ -21,7 +24,7 @@ export default function EditableTransactionList({
           <EditableTransactionItem
             key={transaction._id}
             transaction={transaction}
-            onUpdate={onUpdate}
+            onUpdate={handleUpdateForm}
           />
         ))}
       </div>
