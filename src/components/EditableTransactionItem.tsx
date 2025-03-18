@@ -39,7 +39,7 @@ export default function EditableTransactionItem({
           </div>
         {/* </div> */}
           <button
-            onClick={() => onUpdate(initialTransaction._id)}
+            onClick={() => onUpdate(initialTransaction._id ?? "")}
             className="p-2 text-gray-600 hover:text-blue-600"
           >
             <FaEdit />
