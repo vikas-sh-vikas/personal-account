@@ -1,31 +1,21 @@
 import mongoose from "mongoose";
+import { connected } from "process";
 
-const MONGO_URL = process.env.MONGO_URL!;
-
-if (!MONGO_URL) {
-  throw new Error("Please define MONGO_URL in the environment variables");
-}
-
-let cached = (global as any).mongoose || { conn: null, promise: null };
+import React from "react";
 
 export async function connect() {
-  if (cached.conn) {
-    return cached.conn;
-  }
-
-  if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGO_URL).then((mongoose) => {
-      console.log("MongoDB Connected Successfully");
-      return mongoose;
-    });
-  }
-
   try {
-    cached.conn = await cached.promise;
+    mongoose.connect(process.env.MONGO_URL!);
+    const connection = mongoose.connection;
+    connection.on("connected", () => {
+      console.log("MongoDb Connected Successfully");
+    });
+    connection.on("error", (err) => {
+      console.log("mongodb connection error" + err);
+      process.exit();
+    });
   } catch (error) {
-    cached.promise = null;
-    throw error;
+    console.log("Something went wrong");
+    console.log(error);
   }
-
-  return cached.conn;
 }
